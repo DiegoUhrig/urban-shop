@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f2eb">
+  <title>Administración — Urban SHOP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: light; --paper: #f5f2eb; --surface: #fffefa; --ink: #262820; --muted: #77786f; --line: #e6e2d8; --olive: #65704f; --olive-dark: #4c5738; --serif: "Playfair Display", Georgia, serif; --sans: "DM Sans", Arial, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+    button, input, textarea { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--olive); outline-offset: 2px; }
+    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    .header { border-bottom: 1px solid var(--line); background: var(--surface); }
+    .nav { display: flex; min-height: 70px; align-items: center; justify-content: space-between; gap: 18px; }
+    .brand { font: 600 23px var(--serif); }
+    .nav-actions { display: flex; align-items: center; gap: 16px; color: var(--muted); font-size: 11px; }
+    .main { padding-top: 40px; padding-bottom: 60px; }
+    h1 { margin: 0; font: 500 36px var(--serif); }
+    h2 { margin: 0 0 17px; font: 500 24px var(--serif); }
+    .lead { margin: 7px 0 25px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .panel { margin-top: 20px; padding: 22px; border: 1px solid var(--line); background: var(--surface); }
+    .login { width: min(430px, 100%); margin: 45px auto; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+    .field { display: grid; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+    label { color: #56564d; font-size: 10px; font-weight: 600; }
+    input, textarea { width: 100%; min-height: 39px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 0; background: white; color: var(--ink); font-size: 12px; }
+    textarea { min-height: 76px; resize: vertical; }
+    .check { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: #56564d; font-size: 11px; }
+    .check input { width: 15px; min-height: 15px; accent-color: var(--olive); }
+    .button { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; padding: 0 15px; border: 1px solid var(--olive); background: var(--olive); color: white; cursor: pointer; font-size: 11px; font-weight: 600; }
+    .button:hover { background: var(--olive-dark); }
+    .button.secondary { border-color: var(--line); background: transparent; color: var(--ink); }
+    .button.danger { border-color: #b9574d; background: #b9574d; }
+    .button:disabled { cursor: wait; opacity: .6; }
+    .form-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .message { min-height: 17px; margin: 12px 0 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .message.error { color: #a7443d; }
+    .message.success { color: #4e6a39; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 13px; }
+    .toolbar h2 { margin: 0; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
+    th, td { padding: 11px 9px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    th { color: var(--muted); font-size: 9px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; }
+    td.product-cell { min-width: 180px; white-space: normal; }
+    td.product-cell small { display: block; margin-top: 4px; color: var(--muted); }
+    .row-actions { display: flex; gap: 6px; }
+    .row-actions button { min-height: 30px; padding: 0 8px; border: 1px solid var(--line); background: transparent; cursor: pointer; font-size: 10px; }
+    .row-actions button:hover { border-color: var(--olive); color: var(--olive-dark); }
+    .hidden { display: none !important; }
+    @media (max-width: 620px) {
+      .main { padding-top: 28px; }
+      .panel { padding: 16px; }
+      .grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav wrap" aria-label="Navegación">
+      <a class="brand" href="/">Urban SHOP <span style="font:500 10px var(--sans);color:#77786f">/ Admin</span></a>
+      <div class="nav-actions">
+        <a href="/">Ver tienda</a>
+        <button class="button secondary hidden" id="logout" type="button">Cerrar sesión</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="wrap main">
+    <section class="panel login" id="login-panel">
+      <h1>Administración</h1>
+      <p class="lead">Ingresá con las credenciales privadas configuradas para Urban SHOP.</p>
+      <form id="login-form">
+        <div class="grid">
+          <div class="field full"><label for="username">Usuario</label><input id="username" name="username" autocomplete="username" required></div>
+          <div class="field full"><label for="password">Contraseña</label><input id="password" name="password" type="password" autocomplete="current-password" required></div>
+        </div>
+        <div class="form-actions"><button class="button" type="submit">Ingresar</button></div>
+        <p class="message" id="login-message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section id="admin-panel" class="hidden">
+      <h1>Panel de Urban SHOP</h1>
+      <p class="lead">Administrá el catálogo masculino, los precios, el stock y los datos de contacto.</p>
+
+      <section class="panel" aria-labelledby="product-form-title">
+        <h2 id="product-form-title">Agregar perfume</h2>
+        <form id="product-form">
+          <input type="hidden" name="id">
+          <div class="grid">
+            <div class="field"><label for="name">Nombre del perfume</label><input id="name" name="name" maxlength="100" required></div>
+            <div class="field"><label for="brand">Marca</label><input id="brand" name="brand" maxlength="80" placeholder="Ej.: Lattafa" required></div>
+            <div class="field"><label for="size">Tamaño / concentración</label><input id="size" name="size" maxlength="80" placeholder="Ej.: EDP · 100 ml" required></div>
+            <div class="field"><label for="price">Precio (ARS)</label><input id="price" name="price" type="number" min="0" max="1000000000" step="0.01" required></div>
+            <div class="field"><label for="stock">Unidades en stock</label><input id="stock" name="stock" type="number" min="0" max="1000000" step="1" required></div>
+            <div class="field"><label for="imageUrl">URL de la foto (opcional)</label><input id="imageUrl" name="imageUrl" type="url" maxlength="1000" placeholder="https://..."></div>
+            <div class="field full"><label for="description">Descripción / notas</label><textarea id="description" name="description" maxlength="500" placeholder="Notas principales, familia olfativa..."></textarea></div>
+          </div>
+          <label class="check"><input name="active" type="checkbox" checked> Mostrar en la tienda</label>
+          <div class="form-actions">
+            <button class="button" id="save-product" type="submit">Guardar perfume</button>
+            <button class="button secondary hidden" id="cancel-edit" type="button">Cancelar edición</button>
+          </div>
+          <p class="message" id="product-message" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="panel" aria-labelledby="products-title">
+        <div class="toolbar"><h2 id="products-title">Productos</h2><button class="button secondary" id="refresh-products" type="button">Actualizar</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Perfume</th><th>Precio</th><th>Stock</th><th>Visible</th><th>Acciones</th></tr></thead>
+            <tbody id="products-body"><tr><td colspan="5">Cargando…</td></tr></tbody>
+          </table>
+        </div>
+        <p class="message" id="catalog-message" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="settings-title">
+        <h2 id="settings-title">WhatsApp y transferencia</h2>
+        <p class="lead">Podés dejarlos vacíos ahora y completarlos desde aquí más adelante.</p>
+        <form id="settings-form">
+          <div class="grid">
+            <div class="field"><label for="whatsapp">WhatsApp con código de país</label><input id="whatsapp" name="whatsapp" inputmode="tel" placeholder="54911..."></div>
+            <div class="field"><label for="transferAlias">Alias de transferencia</label><input id="transferAlias" name="transferAlias" maxlength="60"></div>
+            <div class="field full"><label for="transferHolder">Titular de la cuenta</label><input id="transferHolder" name="transferHolder" maxlength="100"></div>
+          </div>
+          <div class="form-actions"><button class="button" type="submit">Guardar datos</button></div>
+          <p class="message" id="settings-message" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const loginPanel = document.querySelector("#login-panel");
+    const adminPanel = document.querySelector("#admin-panel");
+    const productsBody = document.querySelector("#products-body");
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[character]);
+    }
+
+    async function api(path, options = {}) {
+      const response = await fetch(path, {
+        ...options,
+        credentials: "same-origin",
+        headers: { ...(options.body ? { "Content-Type": "application/json" } : {}), ...options.headers }
+      });
+      if (!response.headers.get("content-type")?.includes("application/json")) {
+        throw new Error(location.protocol === "file:"
+          ? "Iniciá el servidor Node (npm start) y abrí /admin desde localhost."
+          : "El servidor devolvió una respuesta no válida.");
+      }
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "No se pudo completar la solicitud.");
+      return data;
+    }
+
+    function showMessage(selector, text, kind = "") {
+      const element = document.querySelector(selector);
+      element.textContent = text;
+      element.className = `message ${kind}`;
+    }
+
+    function showAdmin(authenticated) {
+      loginPanel.classList.toggle("hidden", authenticated);
+      adminPanel.classList.toggle("hidden", !authenticated);
+      document.querySelector("#logout").classList.toggle("hidden", !authenticated);
+      if (authenticated) loadAdminData();
+    }
+
+    async function loadAdminData() {
+      try {
+        const [catalog, settings] = await Promise.all([api("/api/admin/products"), api("/api/admin/store")]);
+        renderProducts(catalog.products);
+        document.querySelector("#whatsapp").value = settings.whatsapp;
+        document.querySelector("#transferAlias").value = settings.transferAlias;
+        document.querySelector("#transferHolder").value = settings.transferHolder;
+        showMessage("#catalog-message", "");
+      } catch (error) {
+        if (error.message.includes("sesión")) showAdmin(false);
+        showMessage("#catalog-message", error.message, "error");
+      }
+    }
+
+    function renderProducts(products) {
+      productsBody.innerHTML = products.length ? products.map(product => `
+        <tr>
+          <td class="product-cell">${escapeHtml(product.name)}<small>${escapeHtml(product.brand)} · ${escapeHtml(product.size)}</small></td>
+          <td>${new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(Number(product.price))}</td>
+          <td>${Number(product.stock)}</td>
+          <td>${product.active ? "Sí" : "No"}</td>
+          <td><div class="row-actions">
+            <button type="button" data-edit="${escapeHtml(product.id)}">Editar</button>
+            <button type="button" data-delete="${escapeHtml(product.id)}">Eliminar</button>
+          </div></td>
+        </tr>`).join("") : '<tr><td colspan="5">Todavía no hay perfumes. Agregá el primero desde el formulario.</td></tr>';
+      productsBody.dataset.products = JSON.stringify(products);
+    }
+
+    function resetProductForm() {
+      const form = document.querySelector("#product-form");
+      form.reset();
+      form.elements.id.value = "";
+      form.elements.active.checked = true;
+      document.querySelector("#product-form-title").textContent = "Agregar perfume";
+      document.querySelector("#save-product").textContent = "Guardar perfume";
+      document.querySelector("#cancel-edit").classList.add("hidden");
+      showMessage("#product-message", "");
+    }
+
+    document.querySelector("#login-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const formElement = event.currentTarget;
+      const form = new FormData(formElement);
+      const button = formElement.querySelector("button[type=submit]");
+      button.disabled = true;
+      showMessage("#login-message", "Ingresando…");
+      try {
+        await api("/api/admin/login", { method: "POST", body: JSON.stringify({ username: form.get("username"), password: form.get("password") }) });
+        formElement.reset();
+        showAdmin(true);
+      } catch (error) {
+        showMessage("#login-message", error.message, "error");
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    document.querySelector("#logout").addEventListener("click", async () => {
+      try {
+        await api("/api/admin/logout", { method: "POST", body: "{}" });
+        showAdmin(false);
+        showMessage("#login-message", "Sesión cerrada.", "success");
+      } catch (error) {
+        showMessage("#catalog-message", error.message, "error");
+      }
+    });
+
+    document.querySelector("#product-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const values = new FormData(form);
+      const data = Object.fromEntries(values.entries());
+      data.price = Number(data.price);
+      data.stock = Number(data.stock);
+      data.active = form.elements.active.checked;
+      const id = data.id;
+      delete data.id;
+      const button = document.querySelector("#save-product");
+      button.disabled = true;
+      try {
+        await api(id ? `/api/admin/products/${encodeURIComponent(id)}` : "/api/admin/products", {
+          method: id ? "PUT" : "POST",
+          body: JSON.stringify(data)
+        });
+        resetProductForm();
+        showMessage("#product-message", "El perfume se guardó correctamente.", "success");
+        await loadAdminData();
+      } catch (error) {
+        showMessage("#product-message", error.message, "error");
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    productsBody.addEventListener("click", async event => {
+      const editButton = event.target.closest("[data-edit]");
+      const deleteButton = event.target.closest("[data-delete]");
+      const products = JSON.parse(productsBody.dataset.products || "[]");
+      if (editButton) {
+        const product = products.find(item => String(item.id) === editButton.dataset.edit);
+        if (!product) return;
+        const form = document.querySelector("#product-form");
+        for (const field of ["id", "name", "brand", "size", "description", "price", "stock", "imageUrl"]) {
+          form.elements[field].value = product[field] ?? "";
+        }
+        form.elements.active.checked = product.active;
+        document.querySelector("#product-form-title").textContent = `Editar ${product.name}`;
+        document.querySelector("#save-product").textContent = "Guardar cambios";
+        document.querySelector("#cancel-edit").classList.remove("hidden");
+        form.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else if (deleteButton) {
+        const product = products.find(item => String(item.id) === deleteButton.dataset.delete);
+        if (!product || !window.confirm(`¿Eliminar ${product.name} del catálogo?`)) return;
+        try {
+          await api(`/api/admin/products/${encodeURIComponent(product.id)}`, { method: "DELETE" });
+          showMessage("#catalog-message", "El perfume se eliminó.", "success");
+          await loadAdminData();
+        } catch (error) {
+          showMessage("#catalog-message", error.message, "error");
+        }
+      }
+    });
+
+    document.querySelector("#cancel-edit").addEventListener("click", resetProductForm);
+    document.querySelector("#refresh-products").addEventListener("click", loadAdminData);
+
+    document.querySelector("#settings-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const values = Object.fromEntries(new FormData(event.currentTarget).entries());
+      const button = event.currentTarget.querySelector("button[type=submit]");
+      button.disabled = true;
+      try {
+        await api("/api/admin/store", { method: "PUT", body: JSON.stringify(values) });
+        showMessage("#settings-message", "WhatsApp y datos de transferencia guardados.", "success");
+      } catch (error) {
+        showMessage("#settings-message", error.message, "error");
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    async function checkSession() {
+      try {
+        const session = await api("/api/admin/session");
+        showAdmin(session.authenticated);
+      } catch (error) {
+        showMessage("#login-message", error.message, "error");
+      }
+    }
+
+    checkSession();
+  </script>
+</body>
+</html>
