@@ -64,6 +64,8 @@ El proyecto incluye `render.yaml` para crear el servicio web de Urban SHOP en Re
    - `NODE_ENV` ya se define como `production` en `render.yaml`; Render proporciona `PORT` automáticamente.
 5. Esperá que el despliegue termine y abrí la URL que Render asigna. El estado se comprueba en `/healthz`; la tienda está en `/` y el panel privado en `/admin`.
 
+Si el servidor informa un error de certificado SSL al conectar con Supabase, descargá la CA oficial y agregala en Render como **Secret File** (por ejemplo, `prod-ca-2021.crt`). Definí `PGSSLROOTCERT` con `/etc/secrets/prod-ca-2021.crt` y volvé a desplegar. No desactives la validación del certificado.
+
 La app crea las tablas de PostgreSQL al arrancar. Después de publicar, iniciá sesión en el panel para cargar perfumes y configurá allí WhatsApp y los datos de transferencia. El servidor escucha en `0.0.0.0` y usa el puerto `PORT` de Render. Nunca subas `.env` ni configures credenciales directamente en el código.
 
 ## Uso del panel
